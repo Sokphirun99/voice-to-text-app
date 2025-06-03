@@ -13,6 +13,14 @@ const nextConfig: NextConfig = {
   images: {
     domains: ["localhost"],
   },
+  // Explicitly opt-in to the App Router
+  experimental: {
+    serverComponentsExternalPackages: [], // Add any packages that need to be external here
+    optimizeCss: true,
+  },
+  poweredByHeader: false,
+  // Improve output tracing for better deployments
+  output: 'standalone',
   async headers() {
     return [
       {

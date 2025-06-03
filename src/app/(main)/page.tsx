@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import AudioRecorder from '../components/audio/AudioRecorder';
-import FileUploader from '../components/ui/FileUploader';
-import useTranscription from '../hooks/useTranscription';
+import AudioRecorder from '@/app/components/audio/AudioRecorder';
+import FileUploader from '@/app/components/ui/FileUploader';
+import useTranscription from '@/app/hooks/useTranscription';
 
 export default function Home() {
   const [isRecording, setIsRecording] = useState(false);

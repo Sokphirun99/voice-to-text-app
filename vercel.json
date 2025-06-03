@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(main)(.*)",
+      "dest": "/$2"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_API_URL": "@next_public_api_url",
+    "NEXT_PUBLIC_MAX_AUDIO_DURATION": "300",
+    "NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB": "25",
+    "NEXT_PUBLIC_ALLOWED_FILE_TYPES": "audio/mpeg,audio/mp3,audio/wav,audio/x-wav,audio/m4a,audio/x-m4a,audio/webm,audio/ogg",
+    "NEXT_PUBLIC_DEFAULT_LANGUAGE": "en",
+    "NEXT_PUBLIC_DEFAULT_SERVICE": "whisper"
+  }
+}

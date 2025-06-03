@@ -5,6 +5,12 @@ export function middleware(request: NextRequest) {
   // Get the path of the request
   const path = request.nextUrl.pathname;
   
+  // Fix for route groups in production
+  if (path === '/(main)' || path.startsWith('/(main)/')) {
+    const newPath = path.replace('/(main)', '');
+    return NextResponse.redirect(new URL(newPath, request.url));
+  }
+  
   // API rate limiting example
   if (path.startsWith('/api/')) {
     // You could implement rate limiting here
