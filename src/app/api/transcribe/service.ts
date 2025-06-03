@@ -14,6 +14,8 @@ interface TranscriptionOptions {
   service?: 'whisper' | 'google' | 'azure';
   diarize?: boolean;
   timestamps?: boolean;
+  format?: 'text' | 'json' | 'srt' | 'vtt';
+  punctuate?: boolean;
 }
 
 export interface TranscriptionResult {
@@ -60,7 +62,7 @@ export async function transcribeAudio(
   logger.info('Performing transcription', { service, language, model });
   
   // Perform the actual transcription with the selected service
-  const transcriptionResult = await transcribeAudioWithService(processedAudio, service);
+  const transcriptionResult = await transcribeAudioWithService(processedAudio, service as 'whisper' | 'google' | 'azure');
   
   // Create and return the result object
   const result: TranscriptionResult = {

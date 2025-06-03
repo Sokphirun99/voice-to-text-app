@@ -35,7 +35,8 @@ export interface AudioFile {
 
 export interface TranscriptionOptions {
   language?: string;
-  model?: 'whisper' | 'google' | 'azure';
+  model?: 'tiny' | 'base' | 'small' | 'medium' | 'large';
+  service?: 'whisper' | 'google' | 'azure';
   diarize?: boolean;  // Speaker identification
   punctuate?: boolean;
   format?: 'text' | 'json' | 'srt' | 'vtt';

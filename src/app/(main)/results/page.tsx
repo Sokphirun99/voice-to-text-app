@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import TranscriptionView from '@/app/components/ui/TranscriptionView';
 import AudioPlayer from '@/app/components/audio/AudioPlayer';
@@ -23,7 +23,7 @@ interface Transcription {
   }[];
 }
 
-export default function ResultsPage() {
+function ResultsPageContent() {
   const searchParams = useSearchParams();
   const transcriptionId = searchParams.get('id');
   const [transcription, setTranscription] = useState<Transcription | null>(null);
@@ -92,14 +92,14 @@ export default function ResultsPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg mb-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Audio</h2>
-            {transcription.audioUrl && (
+            {transcription?.audioUrl && (
               <AudioDownloadButton 
                 audioUrl={transcription.audioUrl} 
                 fileName={`transcription-${transcription.id}-audio`}
               />
             )}
           </div>
-          {transcription.audioUrl && (
+          {transcription?.audioUrl && (
             <AudioPlayer audioUrl={transcription.audioUrl} />
           )}
 
@@ -109,24 +109,24 @@ export default function ResultsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
               <div className="flex items-center">
                 <span className="text-gray-500 dark:text-gray-400 mr-2">Created:</span>
-                <span>{new Date(transcription.createdAt).toLocaleString()}</span>
+                <span>{transcription ? new Date(transcription.createdAt).toLocaleString() : '-'}</span>
               </div>
               
-              {transcription.duration !== undefined && (
+              {transcription?.duration !== undefined && (
                 <div className="flex items-center">
                   <span className="text-gray-500 dark:text-gray-400 mr-2">Duration:</span>
                   <span>{Math.floor(transcription.duration / 60)}:{Math.floor(transcription.duration % 60).toString().padStart(2, '0')}</span>
                 </div>
               )}
               
-              {transcription.language && (
+              {transcription?.language && (
                 <div className="flex items-center">
                   <span className="text-gray-500 dark:text-gray-400 mr-2">Language:</span>
                   <span>{transcription.language.toUpperCase()}</span>
                 </div>
               )}
               
-              {transcription.segments && (
+              {transcription?.segments && (
                 <div className="flex items-center">
                   <span className="text-gray-500 dark:text-gray-400 mr-2">Segments:</span>
                   <span>{transcription.segments.length}</span>
@@ -139,14 +139,18 @@ export default function ResultsPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg mb-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Transcription</h2>
-            <span className="text-sm bg-blue-100 text-blue-800 py-1 px-3 rounded-full">
-              Confidence: {Math.round(transcription.confidence * 100)}%
-            </span>
+            {transcription && (
+              <span className="text-sm bg-blue-100 text-blue-800 py-1 px-3 rounded-full">
+                Confidence: {Math.round(transcription.confidence * 100)}%
+              </span>
+            )}
           </div>
-          <TranscriptionView 
-            text={transcription.text} 
-            transcriptionId={transcription.id} 
-          />
+          {transcription && (
+            <TranscriptionView 
+              text={transcription.text} 
+              transcriptionId={transcription.id} 
+            />
+          )}
         </div>
         
         <div className="flex justify-between">
@@ -168,5 +172,25 @@ export default function ResultsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Loading fallback component
+function ResultsLoading() {
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="text-center">
+        <h2 className="text-xl font-medium mb-2">Loading transcription...</h2>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-700 mx-auto"></div>
+      </div>
+    </div>
+  );
+}
+
+export default function ResultsPage() {
+  return (
+    <Suspense fallback={<ResultsLoading />}>
+      <ResultsPageContent />
+    </Suspense>
   );
 }

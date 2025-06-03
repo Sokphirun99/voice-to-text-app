@@ -1,9 +1,9 @@
 'use client';
 
 import { ReactNode } from 'react';
-import Header from '../../components/layout/Header';
-import Footer from '../../components/layout/Footer';
-import { AudioProvider } from '../../context/AudioContext';
+import Header from '@/app/components/layout/Header';
+import Footer from '@/app/components/layout/Footer';
+import { AudioProvider } from '@/app/context/AudioContext';
 import RecordingStatus from '@/app/components/audio/RecordingStatus';
 
 export default function MainLayout({ children }: { children: ReactNode }) {
