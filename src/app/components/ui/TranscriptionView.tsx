@@ -78,51 +78,99 @@ export default function TranscriptionView({ text, transcriptionId }: Transcripti
   
   return (
     <div className="w-full">
-      <div className={`relative ${isEditing ? 'border-2 border-blue-300 rounded-md' : ''}`}>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center">
+          <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mr-3">
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Transcription Text</h2>
+        </div>
+        
+        {/* Status indicators */}
+        {saveStatus === 'success' && (
+          <div className="flex items-center px-3 py-1 bg-green-100 dark:bg-green-900/30 rounded-full text-sm text-green-700 dark:text-green-400 animate-fade-in">
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            Saved successfully
+          </div>
+        )}
+        
+        {saveStatus === 'error' && (
+          <div className="flex items-center px-3 py-1 bg-red-100 dark:bg-red-900/30 rounded-full text-sm text-red-700 dark:text-red-400 animate-fade-in">
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Save failed
+          </div>
+        )}
+      </div>
+
+      {/* Main content area */}
+      <div className={`relative transition-all duration-300 ${
+        isEditing 
+          ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-blue-300 dark:border-blue-600 rounded-2xl shadow-lg' 
+          : 'bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border border-white/20 dark:border-gray-700/30 rounded-2xl shadow-xl hover:shadow-2xl'
+      }`}>
         {isEditing ? (
           <textarea
             value={transcription}
             onChange={(e) => setTranscription(e.target.value)}
-            className="w-full min-h-[200px] p-4 bg-transparent resize-y focus:outline-none"
+            className="w-full min-h-[300px] p-6 bg-transparent resize-y focus:outline-none text-gray-900 dark:text-white text-lg leading-relaxed"
+            placeholder="Edit your transcription here..."
             autoFocus
           />
         ) : (
-          <div className="prose max-w-none p-4">
-            {transcription.split('\n').map((paragraph, index) => (
-              <p key={index} className={paragraph.trim() === '' ? 'h-4' : ''}>
-                {paragraph}
-              </p>
-            ))}
+          <div className="p-6">
+            <div className="prose prose-lg max-w-none text-gray-900 dark:text-white">
+              {transcription.split('\n').map((paragraph, index) => (
+                <p key={index} className={`${paragraph.trim() === '' ? 'h-6' : 'mb-4 leading-relaxed'}`}>
+                  {paragraph || '\u00A0'}
+                </p>
+              ))}
+            </div>
           </div>
         )}
       </div>
       
-      <div className="flex flex-wrap justify-between mt-4">
-        <div className="flex space-x-2">
+      {/* Action buttons */}
+      <div className="flex flex-wrap items-center justify-between mt-6 gap-4">
+        <div className="flex flex-wrap gap-3">
           {isEditing ? (
             <>
               <button
                 onClick={handleSave}
                 disabled={isSaving}
-                className={`px-4 py-2 rounded-md text-white bg-green-600 hover:bg-green-700 disabled:bg-green-400 flex items-center space-x-1`}
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 disabled:from-green-400 disabled:to-emerald-400 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 disabled:transform-none disabled:cursor-not-allowed"
               >
                 {isSaving ? (
                   <>
-                    <svg className="animate-spin h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg className="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    <span>Saving...</span>
+                    Saving...
                   </>
                 ) : (
-                  <span>Save Changes</span>
+                  <>
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Save Changes
+                  </>
                 )}
               </button>
               <button
                 onClick={handleCancel}
                 disabled={isSaving}
-                className="px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
+                className="inline-flex items-center px-6 py-3 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-xl border border-gray-300 dark:border-gray-600 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
               >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
                 Cancel
               </button>
             </>
@@ -130,43 +178,29 @@ export default function TranscriptionView({ text, transcriptionId }: Transcripti
             <>
               <button
                 onClick={handleEdit}
-                className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 flex items-center space-x-1"
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
-                <span>Edit</span>
+                Edit Text
               </button>
               <button
                 onClick={handleCopy}
-                className="px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-100 flex items-center space-x-1"
+                className="inline-flex items-center px-6 py-3 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-xl border border-gray-300 dark:border-gray-600 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z" />
-                  <path d="M3 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6h-4.586l1.293-1.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L10.414 13H15v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM15 11h2a1 1 0 110 2h-2v-2z" />
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
-                <span>Copy</span>
+                Copy Text
               </button>
-              <ExportMenu transcriptionId={transcriptionId} />
             </>
           )}
         </div>
         
-        {saveStatus === 'success' && (
-          <div className="flex items-center text-sm text-green-600">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-            Changes saved successfully
-          </div>
-        )}
-        
-        {saveStatus === 'error' && (
-          <div className="flex items-center text-sm text-red-600">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
-            Failed to save changes
+        {!isEditing && (
+          <div className="flex items-center">
+            <ExportMenu transcriptionId={transcriptionId} />
           </div>
         )}
       </div>

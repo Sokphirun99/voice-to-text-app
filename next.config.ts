@@ -15,9 +15,9 @@ const nextConfig: NextConfig = {
   },
   // Explicitly opt-in to the App Router
   experimental: {
-    serverComponentsExternalPackages: [], // Add any packages that need to be external here
     optimizeCss: true,
   },
+  serverExternalPackages: [], // External packages for Server Components
   poweredByHeader: false,
   // Improve output tracing for better deployments
   output: 'standalone',
